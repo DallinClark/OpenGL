@@ -101,15 +101,9 @@ int main()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glBindVertexArray(0); // Unbinds VAO
-
     Texture containerTex("resources/textures/container.jpg", 0);
-    Texture faceTex("resources/textures/face.png", 1);
+    Texture faceTex("resources/textures/face.png", 0);
 
-
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
     // Render loop
     while (!glfwWindowShouldClose(window))
@@ -123,20 +117,22 @@ int main()
 
         ourShader.use();
         ourShader.setInt("texture1", 0);
-        ourShader.setInt("texture2", 1);
-        containerTex.use();
-        faceTex.use();
 
         glm::mat4 trans = glm::mat4(1.0f);
         trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+        trans = glm::scale(trans, glm::vec3(0.2, 0.2, 0.2));
         ourShader.setMatrix4fv("transform", trans);
-        
-
-        glBindVertexArray(VAO);
+        containerTex.use();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glBindVertexArray(0);
+        glm::mat4 trans2 = glm::mat4(1.0f);
+        trans2 = glm::translate(trans2, glm::vec3(0.5f, 0.5f, 0.0f));
+        trans2 = glm::rotate(trans2, -(float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        trans2 = glm::scale(trans2, glm::vec3(0.3, 0.3, 0.3)); 
+        ourShader.setMatrix4fv("transform", trans2);
+        faceTex.use();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         glBindTexture(GL_TEXTURE_2D, 0);
 
         // Check and call events and swap the buffers
